@@ -5,11 +5,25 @@ import { useEffect, useState } from "react";
  * @returns object
  */
 
+const MAX_HISTORY_STACK = 15;
+
 const useScroll = () => {
     const [val, setVal] = useState(0);
+    const [scrollBuffer, setScrollBuffer] = useState([] as number[]);
+    const [direction, setDirection] = useState('');
 
     const scrollFn = (e: any) => {
-        setVal(window.scrollY || window.pageYOffset);
+        const scrollVal = window.scrollY;
+
+        setVal(scrollVal);
+        
+        setScrollBuffer((prev) => {
+            if (prev.length >= MAX_HISTORY_STACK) {
+                prev.pop();
+            }
+
+            return [scrollVal, ...prev];
+        })
     };
 
     useEffect(() => {
@@ -17,8 +31,13 @@ const useScroll = () => {
         return () => window.removeEventListener('scroll', scrollFn);
     }, []);
 
+    useEffect(() => {
+        setDirection(scrollBuffer[0] < scrollBuffer[1] ? 'up' : 'down');
+    }, [scrollBuffer]);
+
     return {
-        y: val
+        y: val,
+        direction: direction,
     }
 }
 
