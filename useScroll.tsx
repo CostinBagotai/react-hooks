@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
  * @returns object
  */
 
-const MAX_HISTORY_STACK = 15;
+const MAX_HISTORY_STACK = 5;
 
 const useScroll = () => {
     const [val, setVal] = useState(0);
@@ -14,8 +14,8 @@ const useScroll = () => {
 
     const scrollFn = (e: any) => {
         const scrollVal = window.scrollY;
-
-        setVal(scrollVal);
+        const floatVal = parseFloat(scrollVal.toFixed(2));
+        setVal(floatVal);
         
         setScrollBuffer((prev) => {
             if (prev.length >= MAX_HISTORY_STACK) {
